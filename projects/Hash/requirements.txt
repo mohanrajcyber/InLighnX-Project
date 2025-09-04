@@ -7,3 +7,4 @@ tqdm
 pycryptodome
 crcmod
 tabulate
+gunicorn
