@@ -1,0 +1,16 @@
+[phases.setup]
+packages = ["nodejs_18", "python3", "make", "gcc", "g++"]
+
+[phases.install]
+commands = [
+    "npm config set python /usr/bin/python3",
+    "npm ci --unsafe-perm"
+]
+
+[phases.build]
+commands = []
+
+[phases.start]
+commands = [
+    "node index.js"
+]
