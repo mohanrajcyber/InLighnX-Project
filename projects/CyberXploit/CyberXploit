@@ -1,0 +1,381 @@
+ #!/usr/bin/env python3
+import os
+import subprocess
+from colorama import Fore, Style,init
+import pyfiglet
+init(autoreset=True)
+
+# -------------- TOOL CATEGORIES ------------------
+
+categories = {
+    "1": {
+        "name": "Network Scanning & Discovery",
+        "tools": {
+            "1": {
+                "name": "Nmap",
+                "install": "sudo apt install -y nmap",
+                "run": "nmap -h; bash"
+            },
+            "2": {
+                "name": "Netdiscover",
+                "install": "sudo apt install -y netdiscover",
+                "run": "netdiscover; bash"
+            },
+            "3": {
+                "name": "Angry IP Scanner",
+                "install": "sudo apt install -y ipscan",
+                "run": "ipscan; bash"
+            },
+            "4": {
+                "name": "Fping",
+                "install": "sudo apt install -y fping",
+                "run": "fping -h; bash"
+            },
+            "5": {
+                "name": "Hping3",
+                "install": "sudo apt install -y hping3",
+                "run": "hping3 --help; bash"
+            }
+        }
+    },
+    "2": {
+        "name": "DNS Information Gathering",
+        "tools": {
+            "1": {
+                "name": "DNSenum",
+                "install": "sudo apt install -y dnsenum",
+                "run": "dnsenum -h; bash"
+            },
+            "2": {
+                "name": "Fierce",
+                "install": "sudo apt install -y fierce",
+                "run": "fierce -h; bash"
+            },
+            "3": {
+                "name": "DNSRecon",
+                "install": "sudo apt install -y dnsrecon",
+                "run": "dnsrecon; bash"
+            },
+            "4": {
+                "name": "dnsmap",
+                "install": "sudo apt install -y dnsmap",
+                "run": "dnsmap -h; bash"
+            },
+            "5": {
+                "name": "dnsdumpster",
+                "install": "git clone https://github.com/sonOfPim/dnsdumpster.git",
+                "run": "python3 dnsdumpster/dnsdumpster.py; bash"
+            }
+        }
+    },
+    "3": {
+        "name": "Web Application Recon",
+        "tools": {
+            "1": {
+                "name": "Subfinder",
+                "install": "go install -v github.com/projectdiscovery/subfinder/v2/cmd/subfinder@latest",
+                "run": "~/go/bin/subfinder -h; bash"
+            },
+            "2": {
+                "name": "HTTPX",
+                "install": "go install -v github.com/projectdiscovery/httpx/cmd/httpx@latest",
+                "run": "~/go/bin/httpx -h; bash"
+            },
+            "3": {
+                "name": "Shodan",
+                "install": "sudo apt install -y python3-shodan",
+                "run": "shodan --help; bash"
+            },
+            "4": {
+                "name": "Amass",
+                "install": "sudo apt install -y amass",
+                "run": "amass enum -h; bash"
+            },
+            "5": {
+                "name": "Censys",
+                "install": "sudo apt install -y censys",
+                "run": "censys -h; bash"
+            },
+            "6": {
+                "name": "Gobuster",
+                "install": "sudo apt install -y gobuster",
+                "run": "gobuster -h; bash"
+            },
+            "7": {
+                "name": "Dirsearch",
+                "install": "git clone https://github.com/maurosoria/dirsearch.git",
+                "run": "python3 dirsearch/dirsearch.py -h; bash"
+            },
+            "8": {
+                "name": "FFUF",
+                "install": "go install -v github.com/ffuf/ffuf@latest",
+                "run": "~/go/bin/ffuf -h; bash"
+            },
+            "9": {
+                "name": "Wfuzz",
+                "install": "sudo apt install -y wfuzz",
+                "run": "wfuzz -h; bash"
+            }
+        }
+    },
+    "4": {
+        "name": "OSINT (Open Source Intelligence) Tools",
+        "tools": {
+            "1": {
+                "name": "TheHarvester",
+                "install": "sudo apt install -y theharvester",
+                "run": "theharvester -h; bash"
+            },
+            "2": {
+                "name": "Maltego",
+                "install": "sudo apt install -y maltego",
+                "run": "maltego"
+            },
+            "3": {
+                "name": "SpiderFoot",
+                "install": "sudo apt install -y spiderfoot",
+                "run": "spiderfoot -h; bash"
+            },
+            "4": {
+                "name": "Recon-ng",
+                "install": "sudo apt install -y recon-ng",
+                "run": "recon-ng"
+            },
+            "5": {
+                "name": "Creepy",
+                "install": "sudo apt install -y creepy",
+                "run": "creepy; bash"
+            }
+        }
+    },
+    "5": {
+        "name": "Social Media & Email Information Gathering",
+        "tools": {
+            "1": {
+                "name": "Sherlock",
+                "install": "git clone https://github.com/sherlock-project/sherlock.git",
+                "run": "python3 sherlock/sherlock.py --help; bash"
+            },
+            "2": {
+                "name": "Social-Engineer Toolkit (SET)",
+                "install": "git clone https://github.com/trustedsec/social-engineer-toolkit.git",
+                "run": "cd social-engineer-toolkit && python3 setup.py; bash"
+            },
+            "3": {
+                "name": "EmailHarvester",
+                "install": "git clone https://github.com/blackorbird/emailharvester.git",
+                "run": "python3 emailharvester/harvester.py; bash"
+            }
+        }
+    },
+    "6": {
+        "name": "Website Vulnerability Scanners",
+        "tools": {
+            "1": {
+                "name": "Nikto",
+                "install": "sudo apt install -y nikto",
+                "run": "nikto -h; bash"
+            },
+            "2": {
+                "name": "Wapiti",
+                "install": "sudo apt install -y wapiti",
+                "run": "wapiti -h; bash"
+            },
+            "3": {
+                "name": "Skipfish",
+                "install": "sudo apt install -y skipfish",
+                "run": "skipfish -h; bash"
+            },
+            "4": {
+                "name": "ZAP (OWASP Zed Attack Proxy)",
+                "install": "sudo apt install -y zaproxy",
+                "run": "zaproxy; bash"
+            },
+            "5": {
+                "name": "Burp Suite",
+                "install": "sudo apt install -y burpsuite",
+                "run": "burpsuite; bash"
+            }
+        }
+    },
+    "7": {
+        "name": "HTTP Request Tools",
+        "tools": {
+            "1": {
+                "name": "Curl",
+                "install": "sudo apt install -y curl",
+                "run": "curl --help; bash"
+            },
+            "2": {
+                "name": "Wget",
+                "install": "sudo apt install -y wget",
+                "run": "wget --help; bash"
+            },
+            "3": {
+                "name": "HTTPing",
+                "install": "sudo apt install -y httping",
+                "run": "httping -h; bash"
+            }
+        }
+    },
+    "8": {
+        "name": "Proxy Tools for Information Gathering",
+        "tools": {
+            "1": {
+                "name": "ProxyChains",
+                "install": "sudo apt install -y proxychains",
+                "run": "proxychains -h; bash"
+            },
+            "2": {
+                "name": "Tor",
+                "install": "sudo apt install -y tor",
+                "run": "tor; bash"
+            },
+            "3": {
+                "name": "Privoxy",
+                "install": "sudo apt install -y privoxy",
+                "run": "privoxy --help; bash"
+            }
+        }
+    },
+    "9": {
+        "name": "OSINT from APIs",
+        "tools": {
+            "1": {
+                "name": "shodan-python",
+                "install": "pip install shodan",
+                "run": "shodan --help; bash"
+            },
+            "2": {
+                "name": "Censys-python",
+                "install": "pip install censys",
+                "run": "censys --help; bash"
+            },
+            "3": {
+                "name": "VirusTotal",
+                "install": "pip install virustotal-python",
+                "run": "virustotal -h; bash"
+            },
+            "4": {
+                "name": "AbuseIPDB",
+                "install": "pip install abuseipdb",
+                "run": "abuseipdb -h; bash"
+            }
+        }
+    },
+    "10": {
+        "name": "Wi-Fi Reconnaissance",
+        "tools": {
+            "1": {
+                "name": "Kismet",
+                "install": "sudo apt install -y kismet",
+                "run": "kismet; bash"
+            },
+            "2": {
+                "name": "Airodump-ng",
+                "install": "sudo apt install -y aircrack-ng",
+                "run": "airodump-ng; bash"
+            },
+            "3": {
+                "name": "Wifite",
+                "install": "sudo apt install -y wifite",
+                "run": "wifite; bash"
+            }
+        }
+    },
+    "11": {
+        "name": "Bluetooth Scanning",
+        "tools": {
+            "1": {
+                "name": "Blueman",
+                "install": "sudo apt install -y blueman",
+                "run": "blueman-manager; bash"
+            },
+            "2": {
+                "name": "BlueHydra",
+                "install": "git clone https://github.com/robertdavidgraham/bluehydra.git",
+                "run": "cd bluehydra && ./bluehydra; bash"
+            }
+        }
+    },
+    "12": {
+        "name": "Miscellaneous Recon Tools",
+        "tools": {
+            "1": {
+                "name": "WhatWeb",
+                "install": "sudo apt install -y whatweb",
+                "run": "whatweb -h; bash"
+            },
+            "2": {
+                "name": "BuiltWith",
+                "install": "sudo apt install -y builtwith",
+                "run": "builtwith --help; bash"
+            },
+            "3": {
+                "name": "Webshag",
+                "install": "git clone https://github.com/gaeqs/webshag.git",
+                "run": "cd webshag && python3 webshag.py; bash"
+            }
+        }
+    }
+}
+
+# -------------- UI PRINT FUNCTIONS ------------------
+
+def banner():
+    os.system("clear")  # Clears the terminal screen
+    ascii_banner = pyfiglet.figlet_format("CyberXploit")
+    print(Fore.CYAN + Style.BRIGHT + ascii_banner)
+    print(Fore.MAGENTA + Style.BRIGHT + "      Welcome to CyberXploit Toolkit\n")
+    print(Fore.GREEN + "    Your one-stop toolkit for network security!\n")
+    print(Fore.YELLOW + "      (Press 'Help' for a list of tools)\n")
+
+# Call the banner function to test the output
+banner()
+def show_categories():
+    print(Fore.YELLOW + "\nSelect a Category:\n")
+    for key, cat in categories.items():
+        print(Fore.GREEN + f"  {key}. {cat['name']}")
+    print(Fore.RED + "  0. Exit\n")
+
+def show_tools(category_key):
+    category = categories[category_key]
+    print(Fore.YELLOW + f"\n[+] {category['name']} Tools:\n")
+    for key, tool in category["tools"].items():
+        print(Fore.CYAN + f"  {key}. {tool['name']}")
+    print(Fore.RED + "  0. Back\n")
+
+# -------------- EXECUTION FUNCTIONS ------------------
+
+def run_tool(tool):
+    print(Fore.YELLOW + f"\n[*] Installing {tool['name']}...\n")
+    subprocess.call(tool["install"], shell=True)
+
+    print(Fore.GREEN + f"\n[+] Launching {tool['name']} in a new terminal...\n")
+    subprocess.call(f"x-terminal-emulator -e bash -c '{tool['run']}'", shell=True)
+
+# -------------- MAIN LOOP ------------------
+
+while True:
+    banner()
+    show_categories()
+    choice = input(Fore.BLUE + "Enter category number: ").strip()
+
+    if choice == "0":
+        print(Fore.RED + "\n[!] Exiting CyberXpolit. Goodbye!\n")
+        break
+
+    elif choice in categories:
+        while True:
+            banner()
+            show_tools(choice)
+            tool_choice = input(Fore.BLUE + "Enter tool number: ").strip()
+
+            if tool_choice == "0":
+                break
+            elif tool_choice in categories[choice]["tools"]:
+                run_tool(categories[choice]["tools"][tool_choice])
+            else:
+                print(Fore.RED + "[!] Invalid tool selection.\n")
+    else:
+        print(Fore.RED + "[!] Invalid category selection.\n")

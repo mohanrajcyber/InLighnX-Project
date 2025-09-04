@@ -1,0 +1,10 @@
+requests
+beautifulsoup4
+tqdm
+playwright
+urllib3
+subfinder
+gf
+curl
+wappalyzer
+dirsearch

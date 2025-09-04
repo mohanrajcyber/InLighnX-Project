@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Web Terminal Classroom</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/xterm/css/xterm.css" />
+<style>
+body, html { margin:0; padding:0; height:100%; width:100%; background:black; font-family: monospace; overflow:hidden; }
+#terminal { width:100%; height:100%; }
+#header { position:absolute; top:0; left:0; width:100%; color:#50fa7b; padding:5px 10px; background:rgba(0,0,0,0.5); z-index:100; }
+#projects { position:absolute; top:50px; left:10px; color:#ff79c6; z-index:101; }
+button { margin:5px; padding:5px 10px; cursor:pointer; background:#282a36; border:1px solid #50fa7b; color:#50fa7b; }
+</style>
+</head>
+<body>
+
+<div id="header">Web Terminal Classroom</div>
+<div id="projects"></div>
+<div id="terminal"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/xterm/lib/xterm.js"></script>
+<script src="/socket.io/socket.io.js"></script>
+<script>
+const term = new Terminal({ cursorBlink:true, theme:{ background:'#000', foreground:'#50fa7b', cursor:'#50fa7b' }});
+term.open(document.getElementById('terminal'));
+term.focus();
+
+fetch('/active-port').then(res=>res.json()).then(data=>{
+    const SERVER_IP = data.ip;
+    const PORT = data.port;
+    const PROJECTS = data.projects;
+
+    const socket = io(`http://${SERVER_IP}:${PORT}`);
+
+    // Project buttons
+    const projDiv = document.getElementById('projects');
+    PROJECTS.forEach(p=>{
+        const btn = document.createElement('button');
+        btn.innerText = p;
+        btn.onclick = ()=>socket.emit('input', `cd ${p}\r`);
+        projDiv.appendChild(btn);
+    });
+
+    term.onData(d=>socket.emit('input', d));
+    socket.on('output', d=>term.write(d));
+});
+</script>
+
+</body>
+</html>

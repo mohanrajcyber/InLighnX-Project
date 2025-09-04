@@ -1,0 +1,16 @@
+certifi==2025.6.15
+cffi==1.17.1
+charset-normalizer==3.4.2
+colorama==0.4.6
+cryptography==45.0.5
+idna==3.10
+markdown-it-py==3.0.0
+mdurl==0.1.2
+pycparser==2.22
+pyfiglet==1.0.3
+Pygments==2.19.2
+requests==2.32.4
+rich==14.0.0
+termcolor==3.1.0
+urllib3==2.5.0
+                           

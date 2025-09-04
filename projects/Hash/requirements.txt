@@ -1,0 +1,6 @@
+colorama
+tqdm
+pycryptodome
+crcmod
+tabulate
+
