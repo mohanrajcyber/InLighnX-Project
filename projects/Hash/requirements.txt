@@ -1,10 +1,17 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 Flask==2.3.3
 Flask-SocketIO==5.5.1
 eventlet==0.33.3
 requests==2.31.0
 =======
 >>>>>>> 0b46736 (Initial commit for Render deploy)
+=======
+Flask==2.3.4
+Flask-SocketIO==6.7.2
+eventlet==0.33.3
+requests==2.31.0
+>>>>>>> 9ee9127 (Add full dependencies for Render deploy)
 colorama
 tqdm
 pycryptodome
